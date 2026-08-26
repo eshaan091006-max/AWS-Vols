@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "vol-results-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "out", "-p", "4321"],
+      "port": 4321,
+      "autoPort": true
     }
   ]
 }

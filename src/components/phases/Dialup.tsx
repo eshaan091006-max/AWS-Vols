@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-const DURATION = 2600;
+const DURATION = 2000;
 const STATUS = [
   'Dialing sbg-technicals.aws ...',
   'Handshaking ...',

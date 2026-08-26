@@ -3,9 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { buildConsoleScript, type ConsoleLine } from '@/lib/consoleScript';
 import type { Vol } from '@/lib/vols';
 
-const LINE_DELAY = 380;
-const STALL_DELAY = 1400;
-const AFTER_LAST = 900;
+const LINE_DELAY = 260;
+const STALL_DELAY = 1300;
+const AFTER_LAST = 700;
 
 const COLOR: Record<ConsoleLine['status'], string> = {
   ok: '#00ff66',

@@ -1,7 +1,42 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-const DECOYS = ['My Computer', 'Recycle Bin', 'Internet'];
+/** A period-correct blue "e" with an orbit, drawn rather than borrowed. */
+function BrowserGlyph() {
+  return (
+    <svg viewBox="0 0 48 48" width="34" height="34" aria-hidden>
+      <text
+        x="24"
+        y="35"
+        textAnchor="middle"
+        fontSize="36"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontWeight="bold"
+        fill="#1a6fc4"
+        stroke="#0b3c73"
+        strokeWidth="0.8"
+      >
+        e
+      </text>
+      <ellipse
+        cx="24"
+        cy="25"
+        rx="21"
+        ry="7.5"
+        fill="none"
+        stroke="#f5c518"
+        strokeWidth="3.5"
+        transform="rotate(-22 24 25)"
+      />
+    </svg>
+  );
+}
+
+const DECOYS: { name: string; glyph: React.ReactNode }[] = [
+  { name: 'My Computer', glyph: '🖥️' },
+  { name: 'Recycle Bin', glyph: '🗑️' },
+  { name: 'Internet', glyph: <BrowserGlyph /> },
+];
 
 export function Desktop({ onLaunch }: { onLaunch: () => void }) {
   const [selected, setSelected] = useState(false);
@@ -33,10 +68,10 @@ export function Desktop({ onLaunch }: { onLaunch: () => void }) {
           <span style={styles.label}>SBG_TECHNICALS_VERDICT.exe</span>
         </button>
 
-        {DECOYS.map((name) => (
-          <div key={name} style={{ ...styles.icon, ...styles.decoy }} aria-hidden>
-            <span style={styles.glyph}>🖥️</span>
-            <span style={styles.label}>{name}</span>
+        {DECOYS.map((d) => (
+          <div key={d.name} style={{ ...styles.icon, ...styles.decoy }} aria-hidden>
+            <span style={styles.glyph}>{d.glyph}</span>
+            <span style={styles.label}>{d.name}</span>
           </div>
         ))}
       </div>
@@ -71,7 +106,15 @@ const styles: Record<string, React.CSSProperties> = {
   },
   iconSelected: { background: 'rgba(0,0,0,0.45)', border: '1px dotted #fff' },
   decoy: { opacity: 0.75, cursor: 'default' },
-  glyph: { fontSize: 34, lineHeight: 1, filter: 'drop-shadow(2px 2px 0 rgba(0,0,0,0.6))' },
+  glyph: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 36,
+    fontSize: 34,
+    lineHeight: 1,
+    filter: 'drop-shadow(2px 2px 0 rgba(0,0,0,0.6))',
+  },
   label: {
     fontFamily: 'var(--font-pixel), monospace',
     fontSize: 8,
