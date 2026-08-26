@@ -141,8 +141,8 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 22,
-    padding: '10px 12px',
+    gap: 16,
+    padding: '8px 12px',
   },
   hero: { textAlign: 'center' },
   kicker: {
@@ -152,19 +152,35 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 'clamp(0.5rem, 2.4vw, 0.7rem)',
     textShadow: '2px 2px 0 #000',
   },
-  wordart: { fontSize: 'clamp(2.6rem, 15vw, 7rem)' },
+  wordart: { fontSize: 'clamp(2.2rem, 13vw, 5.4rem)' },
   name: {
-    margin: '14px 0 0',
+    margin: '10px 0 0',
     color: 'var(--accent)',
     fontFamily: 'var(--font-pixel), monospace',
-    fontSize: 'clamp(0.85rem, 4.5vw, 1.6rem)',
+    fontSize: 'clamp(0.75rem, 3.8vw, 1.25rem)',
     textShadow: '3px 3px 0 #000',
     wordBreak: 'break-word',
   },
-  win: { width: 'min(440px, 100%)' },
+  win: { width: 'min(400px, 100%)' },
   winBody: { display: 'flex', flexDirection: 'column', gap: 12 },
-  memeWrap: { border: 'var(--bevel-in)', background: '#fff', padding: 4 },
-  meme: { display: 'block', width: '100%', height: 'auto' },
+  memeWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    border: 'var(--bevel-in)',
+    background: '#fff',
+    padding: 4,
+  },
+  // Capped by height, not width: a portrait selfie at width:100% runs several
+  // screens tall. This lets tall images shrink to fit while wide ones still
+  // fill the frame, and never crops anyone's face.
+  meme: {
+    display: 'block',
+    maxWidth: '100%',
+    width: 'auto',
+    height: 'auto',
+    maxHeight: 'min(42dvh, 340px)',
+    objectFit: 'contain',
+  },
   placeholder: {
     display: 'flex',
     flexDirection: 'column',

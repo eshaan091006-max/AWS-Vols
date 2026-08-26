@@ -5,5 +5,12 @@
     "meme": "/memes/shreyas.jpeg",
     "message": "Shreya ji, badhai ho aapko, aap vol bangaye abb website acche se banana, ok babu bye bye",
     "accent": "#4d38e5"
+  },
+  {
+    "slug": "abhinav-8aup",
+    "name": "Abhinav",
+    "meme": "/memes/abhinav.jpg",
+    "message": "Yo, You've been selected as a member of the technicals team, be ready to be absolutely bombarded with useless work teehee......",
+    "accent": "#ff00ff"
   }
 ]
