@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ACCENT_PALETTE, DEFAULT_MESSAGE, getAllVols, getVol, normalizeVol } from './vols';
 
@@ -38,30 +40,49 @@ describe('normalizeVol', () => {
   });
 });
 
-describe('getAllVols', () => {
-  it('returns every vol from the data file', () => {
-    expect(getAllVols().length).toBeGreaterThanOrEqual(2);
+/**
+ * These validate whatever is actually in data/vols.json rather than any fixture,
+ * so `npm test` doubles as a pre-flight check on the real roster. They must hold
+ * for an empty file too — an empty roster is a normal state while setting up.
+ */
+describe('the real data file', () => {
+  it('gives every vol a non-empty name', () => {
+    for (const v of getAllVols()) expect(v.name.trim()).not.toBe('');
   });
 
-  it('gives every vol a non-empty message and accent', () => {
+  it('gives every vol a non-empty message and a hex accent', () => {
     for (const v of getAllVols()) {
-      expect(v.message.length).toBeGreaterThan(0);
-      expect(v.accent).toMatch(/^#/);
+      expect(v.message.trim()).not.toBe('');
+      expect(v.accent).toMatch(/^#[0-9a-f]{3,8}$/i);
     }
+  });
+
+  it('gives every vol a URL-safe slug', () => {
+    for (const v of getAllVols()) expect(v.slug).toMatch(/^[a-z0-9-]+$/);
   });
 
   it('has no duplicate slugs', () => {
     const slugs = getAllVols().map((v) => v.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
   });
+
+  // Catches a typo'd path before the links go out, when it would otherwise
+  // silently degrade to the placeholder frame on someone's results page.
+  it('points every meme at a file that exists', () => {
+    for (const v of getAllVols()) {
+      if (!v.meme) continue;
+      const file = path.join(process.cwd(), 'public', v.meme.replace(/^\//, ''));
+      expect(existsSync(file), `${v.name}: missing ${v.meme}`).toBe(true);
+    }
+  });
 });
 
 describe('getVol', () => {
-  it('finds a vol by slug', () => {
-    expect(getVol('sample-bare-c3d4')?.name).toBe('Priya');
+  it('finds every vol by its own slug', () => {
+    for (const v of getAllVols()) expect(getVol(v.slug)?.name).toBe(v.name);
   });
 
   it('returns undefined for an unknown slug', () => {
-    expect(getVol('nope')).toBeUndefined();
+    expect(getVol('definitely-not-a-real-slug')).toBeUndefined();
   });
 });

@@ -1,14 +1,1 @@
-[
-  {
-    "slug": "sample-full-a1b2",
-    "name": "Shreyas",
-    "meme": "/memes/sample.png",
-    "message": "you asked what a for loop was on day one. now look at you.",
-    "consoleLines": ["EXCUSES COUNTED...... 4", "CHAI CONSUMED...... 61L"],
-    "accent": "#ff00ff"
-  },
-  {
-    "slug": "sample-bare-c3d4",
-    "name": "Priya"
-  }
-]
+[]
