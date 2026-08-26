@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/Reveal';
 import { getAllVols, getVol } from '@/lib/vols';
 
 export function generateStaticParams() {
@@ -11,11 +12,5 @@ export default async function VolPage({ params }: { params: Promise<{ slug: stri
   const vol = getVol(slug);
   if (!vol) return null;
 
-  return (
-    <main>
-      <h1>{vol.name}</h1>
-      <p>{vol.message}</p>
-      <p>{vol.accent}</p>
-    </main>
-  );
+  return <Reveal vol={vol} />;
 }

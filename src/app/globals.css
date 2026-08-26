@@ -1,3 +1,244 @@
+/* ============================================================
+   AWS SBG Technicals — Y2K design system
+   Everything is hand-rolled. No UI library, no icon font.
+   ============================================================ */
+
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
-body { background: #000; color: #fff; font-family: var(--font-terminal), monospace; }
+*::selection { background: var(--accent); color: #000; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+:root {
+  --y2k-teal: #008080;
+  --y2k-silver: #c0c0c0;
+  --y2k-navy: #000080;
+  --y2k-bsod: #0000aa;
+  --accent: #ff00ff;
+
+  --bevel-out: 2px outset #ffffff;
+  --bevel-in: 2px inset #ffffff;
+  --taskbar-h: 44px;
+}
+
+body {
+  min-height: 100dvh;
+  color: #000;
+  font-family: var(--font-comic), 'Comic Sans MS', cursive, sans-serif;
+  background-color: var(--y2k-teal);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 4px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Windows ---------- */
+
+.win {
+  background: var(--y2k-silver);
+  border: var(--bevel-out);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.win-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  background: linear-gradient(90deg, var(--y2k-navy), var(--accent));
+  color: #fff;
+  font-family: var(--font-pixel), monospace;
+  font-size: clamp(0.42rem, 2vw, 0.6rem);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.win-title .spacer { margin-left: auto; }
+
+.win-title .btns {
+  display: flex;
+  gap: 3px;
+}
+
+.win-title .btns span {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 16px;
+  background: var(--y2k-silver);
+  border: var(--bevel-out);
+  color: #000;
+  font-size: 9px;
+  font-family: monospace;
+}
+
+.win-body { padding: 12px; }
+
+/* ---------- Buttons ---------- */
+
+.win-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--y2k-silver);
+  border: var(--bevel-out);
+  color: #000;
+  font-family: var(--font-pixel), monospace;
+  font-size: clamp(0.5rem, 2.4vw, 0.68rem);
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.win-btn:active:not(:disabled) { border-style: inset; transform: translate(1px, 1px); }
+.win-btn:disabled { color: #808080; cursor: wait; }
+.win-btn:focus-visible { outline: 2px dotted #000; outline-offset: -6px; }
+
+/* ---------- WordArt ---------- */
+
+.wordart {
+  margin: 0;
+  font-family: Impact, 'Haettenschweiler', var(--font-pixel), sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.92;
+  background: linear-gradient(180deg, #fff8a0 0%, #ffef00 42%, #ff8a00 62%, #ff008a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 2px #000;
+  paint-order: stroke fill;
+  filter:
+    drop-shadow(3px 3px 0 #000)
+    drop-shadow(5px 5px 0 var(--accent))
+    drop-shadow(7px 7px 0 rgba(0, 0, 0, 0.55));
+}
+
+/* ---------- Marquee ---------- */
+
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  background: #000;
+  color: var(--accent);
+  border-block: 2px solid var(--accent);
+  font-family: var(--font-pixel), monospace;
+  font-size: clamp(0.5rem, 2.2vw, 0.75rem);
+  padding: 7px 0;
+}
+
+.marquee > span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-left 18s linear infinite;
+}
+
+@keyframes scroll-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes shake {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  20%  { transform: translate(-6px, 4px) rotate(-1deg); }
+  40%  { transform: translate(5px, -5px) rotate(1deg); }
+  60%  { transform: translate(-5px, -3px) rotate(-0.6deg); }
+  80%  { transform: translate(6px, 3px) rotate(0.8deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.shake { animation: shake 0.28s linear 3; }
+
+@keyframes blink { 50% { opacity: 0; } }
+.blink { animation: blink 1s step-end infinite; }
+
+@keyframes shatter {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  60% {
+    transform: scale(1.08) rotate(-1deg);
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 38%, 62% 44%, 100% 52%, 100% 100%, 0 100%, 0 58%, 40% 50%, 0 42%);
+  }
+  100% {
+    transform: scale(1.22) rotate(2deg);
+    opacity: 0;
+    clip-path: polygon(0 0, 34% 0, 20% 30%, 0 26%, 0 0, 100% 0, 100% 24%, 74% 34%, 100% 44%, 100% 100%, 0 100%, 0 64%, 30% 56%, 0 48%);
+  }
+}
+
+.shatter { animation: shatter 0.52s cubic-bezier(0.3, 0, 0.6, 1) forwards; }
+
+@keyframes fade-out { to { opacity: 0; } }
+.fade-out { animation: fade-out 0.2s linear forwards; }
+
+/* ---------- Scanlines ---------- */
+
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* ---------- Cursor trail ---------- */
+
+.cursor-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+/* ---------- Taskbar ---------- */
+
+.taskbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--taskbar-h);
+  padding: 0 6px;
+  background: var(--y2k-silver);
+  border-top: var(--bevel-out);
+}
+
+.taskbar .clock {
+  margin-left: auto;
+  padding: 6px 10px;
+  border: var(--bevel-in);
+  font-family: var(--font-pixel), monospace;
+  font-size: clamp(0.45rem, 2vw, 0.6rem);
+  white-space: nowrap;
+}
+
+.taskbar .win-btn { min-height: 32px; padding: 6px 10px; }
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee > span,
+  .shake,
+  .blink,
+  .shatter {
+    animation: none !important;
+  }
+  .shatter { opacity: 0; }
+  .cursor-trail { display: none !important; }
+}
