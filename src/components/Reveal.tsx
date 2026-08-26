@@ -39,7 +39,7 @@ export function Reveal({ vol }: { vol: Vol }) {
       {phase === 'desktop' && <Desktop onLaunch={toDialup} />}
       {phase === 'dialup' && <Dialup onDone={toEvaluating} />}
       {phase === 'evaluating' && <Evaluating vol={vol} onDone={toRejected} />}
-      {phase === 'rejected' && <Rejected vol={vol} onDone={toAccepted} />}
+      {phase === 'rejected' && <Rejected vol={vol} onDone={toAccepted} soundEnabled={!audio.muted} />}
       {phase === 'accepted' && <Accepted vol={vol} />}
       <Chrome
         accent={vol.accent}

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Vol } from '@/lib/vols';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { playDialupScreech } from '@/lib/modemSound';
 
 const HOLD = 3000;
 const GRACE = 1200;
@@ -15,11 +16,26 @@ const DIALOGS = [
   { title: 'System', text: 'sbg_technicals.dll not found.' },
 ];
 
-export function Rejected({ vol, onDone }: { vol: Vol; onDone: () => void }) {
+export function Rejected({
+  vol,
+  onDone,
+  soundEnabled = true,
+}: {
+  vol: Vol;
+  onDone: () => void;
+  soundEnabled?: boolean;
+}) {
   const reduced = useReducedMotion();
   const [dialogs, setDialogs] = useState(0);
   const [exiting, setExiting] = useState(false);
   const fired = useRef(false);
+
+  // The modem screech rides in with the error dialogs.
+  useEffect(() => {
+    if (!soundEnabled) return;
+    const stop = playDialupScreech();
+    return stop;
+  }, [soundEnabled]);
 
   const leave = useCallback(() => {
     if (fired.current) return;
