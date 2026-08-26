@@ -11,6 +11,48 @@
     "name": "Abhinav",
     "meme": "/memes/abhinav.jpg",
     "message": "Yo, You've been selected as a member of the technicals team, be ready to be absolutely bombarded with useless work teehee......",
-    "accent": "#ff00ff"
+    "accent": "#cc2424"
+  },
+  {
+    "slug": "suhani-hhpr",
+    "name": "Suhani",
+    "meme": "/memes/vol.jpeg",
+    "message": "Okay, DO NOT KILL ME, for I am just an innocent Eshaan, also, aapko badhai ho, for making it to the team, your \"application\" was very moving",
+    "accent": "#ec3cec"
+  },
+  {
+    "slug": "joanne-xzcp",
+    "name": "Joanne",
+    "meme": "/memes/joanne.jpg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#ff8aff"
+  },
+  {
+    "slug": "rochelle-c9ym",
+    "name": "Rochelle",
+    "meme": "/memes/rochelle.jpg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#ff70ff"
+  },
+  {
+    "slug": "arijeet-vh7p",
+    "name": "Arijeet",
+    "meme": "/memes/arijeet.jpg",
+    "message": "Arijet, you made it to the team, congo, abhi apko bohot kam karna hoga, teehee",
+    "accent": "#bfdd2c"
+  },
+  {
+    "slug": "ian-izz9",
+    "name": "Ian",
+    "meme": "/memes/ian.jpg",
+    "message": "Jethani made it to the team, and so did you, chalo abb aap dono maze se kaam karna",
+    "accent": "#3cc88b"
+  },
+  {
+    "slug": "shaun-pfii",
+    "name": "Shaun",
+    "meme": "/memes/shaun.jpg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#141414"
   }
 ]
