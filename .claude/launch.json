@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vol-results",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "vol-results-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "out", "-p", "4321"],
+      "port": 4321,
+      "autoPort": true
+    },
+    {
+      "name": "vol-admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "admin"],
+      "port": 4444,
+      "autoPort": true
+    }
+  ]
+}
