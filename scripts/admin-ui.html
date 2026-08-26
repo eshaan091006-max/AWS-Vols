@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vol Admin</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 16px 84px;
+    background: #008080;
+    font: 14px/1.5 "Segoe UI", system-ui, sans-serif;
+    color: #000;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; color: #fff; text-shadow: 2px 2px 0 #000; }
+  .sub { margin: 0 0 20px; color: #cfe; font-size: 13px; }
+  .win { background: #c0c0c0; border: 2px outset #fff; box-shadow: 4px 4px 0 rgba(0,0,0,.5); margin-bottom: 16px; }
+  .title { background: linear-gradient(90deg, #000080, #1084d0); color: #fff; padding: 5px 8px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .title .sp { margin-left: auto; font-weight: 400; opacity: .85; font-family: Consolas, monospace; font-size: 12px; }
+  .body { padding: 14px; }
+  label { display: block; font-weight: 700; font-size: 12px; margin: 10px 0 3px; }
+  input[type=text], textarea, input[type=color] {
+    width: 100%; padding: 7px 8px; border: 2px inset #fff; background: #fff;
+    font: inherit; font-size: 13px;
+  }
+  input[type=color] { height: 38px; padding: 2px; }
+  textarea { resize: vertical; min-height: 62px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > * { flex: 1 1 220px; min-width: 0; }
+  button {
+    background: #c0c0c0; border: 2px outset #fff; padding: 8px 14px;
+    font: inherit; font-size: 13px; cursor: pointer;
+  }
+  button:active { border-style: inset; }
+  button.primary { font-weight: 700; }
+  button.danger { color: #a00; }
+  .meme { display: flex; gap: 12px; align-items: flex-start; margin-top: 6px; }
+  .meme img { width: 120px; height: 90px; object-fit: cover; border: 2px inset #fff; background: #fff; }
+  .none { width: 120px; height: 90px; display: grid; place-items: center; border: 2px inset #fff; background: #e8e8e8; color: #777; font-size: 11px; text-align: center; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: #c0c0c0; border-top: 2px outset #fff; padding: 10px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .msg { font-size: 13px; }
+  .ok { color: #060; }
+  .err { color: #a00; font-weight: 700; }
+  .links { font-family: Consolas, monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; background: #fff; border: 2px inset #fff; padding: 10px; max-height: 220px; overflow: auto; }
+  .warn { background: #ffc; border: 1px solid #cc0; padding: 8px 10px; font-size: 12px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Vol Admin</h1>
+  <p class="sub">Edits data/vols.json and public/memes/ directly. Save, then redeploy to publish.</p>
+
+  <div id="list"></div>
+
+  <div class="win">
+    <div class="title">Links</div>
+    <div class="body">
+      <label for="siteUrl">Site URL</label>
+      <input type="text" id="siteUrl" placeholder="https://your-site.vercel.app" />
+      <label>Distribution list</label>
+      <div class="links" id="links">Save once to generate slugs.</div>
+      <div class="warn">Slugs are never regenerated once set, because you may already have sent those links.</div>
+    </div>
+  </div>
+</div>
+
+<div class="bar">
+  <button class="primary" id="add">+ Add vol</button>
+  <button class="primary" id="save">Save all</button>
+  <span class="msg" id="msg"></span>
+</div>
+
+<script>
+var state = { vols: [] };
+
+function el(tag, cls, text) {
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function field(labelText, value, oninput, multiline, placeholder) {
+  var wrap = el('div');
+  wrap.appendChild(el('label', null, labelText));
+  var input = document.createElement(multiline ? 'textarea' : 'input');
+  if (!multiline) input.type = 'text';
+  input.value = value || '';
+  if (placeholder) input.placeholder = placeholder;
+  input.addEventListener('input', function () { oninput(input.value); });
+  wrap.appendChild(input);
+  return wrap;
+}
+
+function slugGuess(name) {
+  return String(name || 'vol').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'vol';
+}
+
+function renderVol(vol, index) {
+  var win = el('div', 'win');
+  var title = el('div', 'title');
+  var nameLabel = el('span', null, vol.name || '(unnamed)');
+  title.appendChild(nameLabel);
+  title.appendChild(el('span', 'sp', vol.slug || 'slug assigned on save'));
+  win.appendChild(title);
+
+  var body = el('div', 'body');
+
+  body.appendChild(field('Name (required)', vol.name, function (v) {
+    vol.name = v;
+    nameLabel.textContent = v || '(unnamed)';
+  }, false, 'Shreyas'));
+
+  body.appendChild(field('Message', vol.message, function (v) { vol.message = v; }, true,
+    'you asked what a for loop was on day one. now look at you.'));
+
+  body.appendChild(field('Console lines (one per line)', (vol.consoleLines || []).join('\n'), function (v) {
+    vol.consoleLines = v.split('\n');
+  }, true, 'EXCUSES COUNTED...... 4'));
+
+  var row = el('div', 'row');
+
+  var accentWrap = el('div');
+  accentWrap.appendChild(el('label', null, 'Accent colour'));
+  var accent = document.createElement('input');
+  accent.type = 'color';
+  accent.value = vol.accent || '#ff00ff';
+  accent.addEventListener('input', function () { vol.accent = accent.value; });
+  accentWrap.appendChild(accent);
+  row.appendChild(accentWrap);
+
+  var memeWrap = el('div');
+  memeWrap.appendChild(el('label', null, 'Meme'));
+  var meme = el('div', 'meme');
+  var preview;
+  if (vol.meme) {
+    preview = document.createElement('img');
+    preview.src = vol.meme + '?t=' + Date.now();
+    preview.alt = 'meme preview';
+  } else {
+    preview = el('div', 'none', 'no meme yet');
+  }
+  meme.appendChild(preview);
+
+  var controls = el('div');
+  var file = document.createElement('input');
+  file.type = 'file';
+  file.accept = 'image/*';
+  file.style.fontSize = '12px';
+  file.addEventListener('change', function () {
+    var f = file.files && file.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      post('/api/upload', {
+        slug: vol.slug || slugGuess(vol.name),
+        filename: f.name,
+        data: reader.result
+      }).then(function (r) {
+        vol.meme = r.path;
+        say('Uploaded ' + r.path, false);
+        render();
+      }).catch(function (e) { say(e.message, true); });
+    };
+    reader.readAsDataURL(f);
+  });
+  controls.appendChild(file);
+
+  if (vol.meme) {
+    var rm = el('button', 'danger', 'Remove meme');
+    rm.style.marginTop = '8px';
+    rm.addEventListener('click', function () {
+      var old = vol.meme;
+      vol.meme = '';
+      post('/api/delete-meme', { path: old }).catch(function () {});
+      render();
+    });
+    controls.appendChild(document.createElement('br'));
+    controls.appendChild(rm);
+  }
+
+  meme.appendChild(controls);
+  memeWrap.appendChild(meme);
+  row.appendChild(memeWrap);
+  body.appendChild(row);
+
+  var del = el('button', 'danger', 'Delete this vol');
+  del.style.marginTop = '14px';
+  del.addEventListener('click', function () {
+    if (!confirm('Delete ' + (vol.name || 'this vol') + '? Their link will stop working.')) return;
+    state.vols.splice(index, 1);
+    render();
+  });
+  body.appendChild(del);
+
+  win.appendChild(body);
+  return win;
+}
+
+function render() {
+  var list = document.getElementById('list');
+  list.innerHTML = '';
+  state.vols.forEach(function (v, i) { list.appendChild(renderVol(v, i)); });
+  renderLinks();
+}
+
+function renderLinks() {
+  var base = (document.getElementById('siteUrl').value || 'https://your-site.vercel.app').replace(/\/$/, '');
+  var withSlugs = state.vols.filter(function (v) { return v.slug; });
+  var out = document.getElementById('links');
+  if (!withSlugs.length) {
+    out.textContent = 'Save once to generate slugs.';
+    return;
+  }
+  var width = 0;
+  withSlugs.forEach(function (v) { width = Math.max(width, (v.name || '').length); });
+  out.textContent = withSlugs.map(function (v) {
+    var gaps = [];
+    if (!v.meme) gaps.push('no meme');
+    if (!v.message) gaps.push('no message');
+    var name = v.name || '';
+    var pad = new Array(width - name.length + 3).join(' ');
+    return name + pad + base + '/r/' + v.slug + '/' + (gaps.length ? '   [' + gaps.join(', ') + ']' : '');
+  }).join('\n');
+}
+
+function say(text, isError) {
+  var m = document.getElementById('msg');
+  m.textContent = text;
+  m.className = 'msg ' + (isError ? 'err' : 'ok');
+}
+
+function post(path, body) {
+  return fetch(path, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body)
+  }).then(function (r) {
+    return r.json().then(function (j) {
+      if (!r.ok) throw new Error(j.error || 'Request failed');
+      return j;
+    });
+  });
+}
+
+document.getElementById('add').addEventListener('click', function () {
+  state.vols.push({ name: '', message: '', consoleLines: [], accent: '#ff00ff', meme: '' });
+  render();
+  window.scrollTo(0, document.body.scrollHeight);
+});
+
+document.getElementById('save').addEventListener('click', function () {
+  var unnamed = 0;
+  state.vols.forEach(function (v) { if (!String(v.name || '').trim()) unnamed++; });
+  post('/api/vols', { vols: state.vols }).then(function (r) {
+    state.vols = r.vols;
+    render();
+    say('Saved ' + r.vols.length + ' vol(s).' + (unnamed ? ' ' + unnamed + ' unnamed entry dropped.' : ''), false);
+  }).catch(function (e) { say(e.message, true); });
+});
+
+document.getElementById('siteUrl').addEventListener('input', renderLinks);
+
+fetch('/api/vols').then(function (r) { return r.json(); }).then(function (d) {
+  state.vols = d.vols;
+  if (d.siteUrl) document.getElementById('siteUrl').value = d.siteUrl;
+  render();
+});
+</script>
+</body>
+</html>

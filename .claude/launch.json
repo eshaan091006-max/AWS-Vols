@@ -14,6 +14,13 @@
       "runtimeArgs": ["serve", "out", "-p", "4321"],
       "port": 4321,
       "autoPort": true
+    },
+    {
+      "name": "vol-admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "admin"],
+      "port": 4444,
+      "autoPort": true
     }
   ]
 }

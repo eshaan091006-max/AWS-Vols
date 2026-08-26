@@ -11,7 +11,26 @@ npm install
 npm run dev
 ```
 
-## Adding a vol
+## Adding vols (the easy way)
+
+```bash
+npm run admin
+```
+
+Opens a local editor at <http://localhost:4444>. Add vols, type their message and
+joke console lines, pick an accent colour, and drag in a meme image. Hitting
+**Save all** writes `data/vols.json` and copies the images into `public/memes/`
+for you, assigning any missing slugs as it goes. The panel at the bottom prints
+the distribution list ready to paste into your DMs.
+
+It binds to loopback only and has no login, because it never leaves your
+machine. It is not deployed and cannot be reached from the internet. Editing the
+JSON by hand still works exactly as before if you prefer it.
+
+After saving, commit and push to publish — the deployed site is a static build,
+so changes go live on the next deploy.
+
+## Adding a vol by hand
 
 Edit `data/vols.json`. One object per vol:
 
@@ -71,7 +90,7 @@ environment variables, no database, no configuration. It is a static export.
 
 - [ ] `npm test` passes
 - [ ] `npm run build && npm run verify` reports no leaks
-- [ ] `npm run links` shows no `[no meme, no message]` flags
+- [ ] The admin (or `npm run links`) shows no `[no meme, no message]` gaps
 - [ ] Every name is spelled the way that person spells it
 - [ ] You have opened at least two real vol links on an actual phone
 - [ ] `public/music.mp3` is in place, or you are happy shipping silent
@@ -88,6 +107,10 @@ genuinely hurts someone.
 HTML file per vol under `out/r/<slug>/`, each containing only that vol's content.
 `npm run verify` greps every generated page for every *other* vol's message and
 meme path and fails the build if it finds one.
+
+The admin in `scripts/admin.mjs` is a standalone local server, not part of the
+Next app: `output: 'export'` forbids API routes, so keeping it separate is what
+lets the deployed site stay 100% static.
 
 The reveal is a five-phase client-side state machine in `src/components/Reveal.tsx`:
 desktop → dial-up → evaluation → rejection → acceptance. The double-click on the
