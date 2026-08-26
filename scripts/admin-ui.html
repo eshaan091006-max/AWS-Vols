@@ -73,6 +73,25 @@
 
 <script>
 var state = { vols: [] };
+var dirty = false;
+
+function markDirty() {
+  if (dirty) return;
+  dirty = true;
+  say('Unsaved changes.', false);
+}
+
+function clearDirty() {
+  dirty = false;
+}
+
+// Data entry here is typed by hand and only persists on Save, so a stray
+// refresh or closed tab must not silently discard it.
+window.addEventListener('beforeunload', function (e) {
+  if (!dirty) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
 
 function el(tag, cls, text) {
   var n = document.createElement(tag);
@@ -88,7 +107,7 @@ function field(labelText, value, oninput, multiline, placeholder) {
   if (!multiline) input.type = 'text';
   input.value = value || '';
   if (placeholder) input.placeholder = placeholder;
-  input.addEventListener('input', function () { oninput(input.value); });
+  input.addEventListener('input', function () { oninput(input.value); markDirty(); });
   wrap.appendChild(input);
   return wrap;
 }
@@ -126,7 +145,7 @@ function renderVol(vol, index) {
   var accent = document.createElement('input');
   accent.type = 'color';
   accent.value = vol.accent || '#ff00ff';
-  accent.addEventListener('input', function () { vol.accent = accent.value; });
+  accent.addEventListener('input', function () { vol.accent = accent.value; markDirty(); });
   accentWrap.appendChild(accent);
   row.appendChild(accentWrap);
 
@@ -159,8 +178,9 @@ function renderVol(vol, index) {
         data: reader.result
       }).then(function (r) {
         vol.meme = r.path;
-        say('Uploaded ' + r.path, false);
+        markDirty();
         render();
+        say('Uploaded ' + r.path + '. Click "Save all" to keep it.', false);
       }).catch(function (e) { say(e.message, true); });
     };
     reader.readAsDataURL(f);
@@ -174,6 +194,7 @@ function renderVol(vol, index) {
       var old = vol.meme;
       vol.meme = '';
       post('/api/delete-meme', { path: old }).catch(function () {});
+      markDirty();
       render();
     });
     controls.appendChild(document.createElement('br'));
@@ -185,12 +206,31 @@ function renderVol(vol, index) {
   row.appendChild(memeWrap);
   body.appendChild(row);
 
+  // Two-step rather than window.confirm(): native modals are suppressed in some
+  // embedded browser contexts, where confirm() silently returns false and the
+  // delete would never fire.
   var del = el('button', 'danger', 'Delete this vol');
   del.style.marginTop = '14px';
+  var armed = false;
+  var armTimer;
   del.addEventListener('click', function () {
-    if (!confirm('Delete ' + (vol.name || 'this vol') + '? Their link will stop working.')) return;
+    if (!armed) {
+      armed = true;
+      del.textContent = 'Click again to delete ' + (vol.name || 'this vol');
+      del.style.fontWeight = '700';
+      armTimer = setTimeout(function () {
+        armed = false;
+        del.textContent = 'Delete this vol';
+        del.style.fontWeight = '';
+      }, 4000);
+      return;
+    }
+    clearTimeout(armTimer);
+    var gone = vol.name || 'vol';
     state.vols.splice(index, 1);
+    markDirty();
     render();
+    say('Removed ' + gone + '. Click "Save all" to make it permanent.', false);
   });
   body.appendChild(del);
 
@@ -246,6 +286,7 @@ function post(path, body) {
 
 document.getElementById('add').addEventListener('click', function () {
   state.vols.push({ name: '', message: '', consoleLines: [], accent: '#ff00ff', meme: '' });
+  markDirty();
   render();
   window.scrollTo(0, document.body.scrollHeight);
 });
@@ -255,6 +296,7 @@ document.getElementById('save').addEventListener('click', function () {
   state.vols.forEach(function (v) { if (!String(v.name || '').trim()) unnamed++; });
   post('/api/vols', { vols: state.vols }).then(function (r) {
     state.vols = r.vols;
+    clearDirty();
     render();
     say('Saved ' + r.vols.length + ' vol(s).' + (unnamed ? ' ' + unnamed + ' unnamed entry dropped.' : ''), false);
   }).catch(function (e) { say(e.message, true); });
