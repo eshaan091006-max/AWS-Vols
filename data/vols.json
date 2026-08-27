@@ -54,5 +54,26 @@
     "meme": "/memes/shaun.jpg",
     "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
     "accent": "#141414"
+  },
+  {
+    "slug": "aarya-nr1u",
+    "name": "Aarya",
+    "meme": "/memes/aarya.jpeg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#f042f0"
+  },
+  {
+    "slug": "naila-zday",
+    "name": "Naila",
+    "meme": "/memes/naila.jpeg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#ff00ff"
+  },
+  {
+    "slug": "raj-v2q6",
+    "name": "Raj",
+    "meme": "/memes/raj.jpeg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#ff00ff"
   }
 ]
