@@ -75,5 +75,12 @@
     "meme": "/memes/raj.jpeg",
     "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
     "accent": "#ff00ff"
+  },
+  {
+    "slug": "yashu-40ef",
+    "name": "Yashu",
+    "meme": "/memes/yashu.jpg",
+    "message": "Welcome to the Technical Team! We are thrilled to have your skills on board. Get ready to tackle exciting projects, solve complex challenges, and build great things with the team.",
+    "accent": "#ff00ff"
   }
 ]
